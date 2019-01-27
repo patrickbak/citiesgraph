@@ -1,0 +1,146 @@
+CREATE TABLE dbo.Miasto(
+MiastoID INT Identity(1,1),
+nazwa VARCHAR NOT NULL,
+populacja INT NOT NULL,
+stolica BIT NOT NULL, 
+) AS NODE;
+
+INSERT INTO dbo.Miasto(nazwa, populacja, stolica)
+VALUES ('Aurgann', '7849', 0), ('Floren', '12645', 0), ('Nemizah', '34114', 1), ('Oerunh', '8662', 0), ('Zednaarg', '21045', 0);
+
+
+CREATE TABLE droga(dystans INT) AS EDGE;
+
+INSERT INTO droga($from_id, $to_id, dystans)
+VALUES
+((SELECT $node_id FROM Miasto WHERE MiastoID=1), (SELECT $node_id FROM Miasto WHERE MiastoID=2), 144),
+((SELECT $node_id FROM Miasto WHERE MiastoID=2), (SELECT $node_id FROM Miasto WHERE MiastoID=5), 131),
+((SELECT $node_id FROM Miasto WHERE MiastoID=5), (SELECT $node_id FROM Miasto WHERE MiastoID=4), 160),
+((SELECT $node_id FROM Miasto WHERE MiastoID=4), (SELECT $node_id FROM Miasto WHERE MiastoID=1), 128),
+((SELECT $node_id FROM Miasto WHERE MiastoID=3), (SELECT $node_id FROM Miasto WHERE MiastoID=1), 94),
+((SELECT $node_id FROM Miasto WHERE MiastoID=3), (SELECT $node_id FROM Miasto WHERE MiastoID=2), 65),
+((SELECT $node_id FROM Miasto WHERE MiastoID=3), (SELECT $node_id FROM Miasto WHERE MiastoID=4), 139),
+
+((SELECT $node_id FROM Miasto WHERE MiastoID=2), (SELECT $node_id FROM Miasto WHERE MiastoID=1), 154),
+((SELECT $node_id FROM Miasto WHERE MiastoID=5), (SELECT $node_id FROM Miasto WHERE MiastoID=2), 127),
+((SELECT $node_id FROM Miasto WHERE MiastoID=4), (SELECT $node_id FROM Miasto WHERE MiastoID=5), 167),
+((SELECT $node_id FROM Miasto WHERE MiastoID=1), (SELECT $node_id FROM Miasto WHERE MiastoID=4), 122),
+((SELECT $node_id FROM Miasto WHERE MiastoID=1), (SELECT $node_id FROM Miasto WHERE MiastoID=3), 106),
+((SELECT $node_id FROM Miasto WHERE MiastoID=2), (SELECT $node_id FROM Miasto WHERE MiastoID=3), 68),
+((SELECT $node_id FROM Miasto WHERE MiastoID=4), (SELECT $node_id FROM Miasto WHERE MiastoID=3), 78),
+((SELECT $node_id FROM Miasto WHERE MiastoID=5), (SELECT $node_id FROM Miasto WHERE MiastoID=3), 145);
+
+
+CREATE TABLE dbo.Wydarzenie(
+WydarzenieID INT Identity(1,1),
+nazwa VARCHAR NOT NULL,
+typ VARCHAR NOT NULL, 
+) AS NODE;
+
+INSERT INTO dbo.Wydarzenie(nazwa, typ)
+VALUES ('Nemizah Festival', 'Concert'), ('Night Of The Raven', 'Show');
+
+CREATE TABLE dbo.Zabytek(
+ZabytekID INT Identity(1,1),
+nazwa VARCHAR NOT NULL,
+rok_budowy INT NOT NULL,
+epoka VARCHAR NOT NULL,
+styl VARCHAR NOT NULL,
+powierzchnia FLOAT NOT NULL,
+) AS NODE;
+
+INSERT INTO dbo.Zabytek(nazwa, rok_budowy, epoka, styl, powierzchnia)
+VALUES 
+('Zednaarg Castle', 1434, 'Middleages', 'Gothic', 312.8), 
+('Nemizah Palace', 1688, 'Modern', 'Baroque', 435.2), 
+('Sultans Palace', 1312, 'Middleages', 'Gothic', 355.1), 
+('Nemizah City Hall', 1792, 'Modern', 'Gothic Revival', 234.9), 
+('Floren Castle', 1121, 'Middleages', 'Roman', 241.6), 
+('Oerunh Therms', 104, 'Antiquity', 'Roman', 144.2),
+('Old Crane', 1475, 'Middleages', 'Gothic', 0.01);
+
+CREATE TABLE dbo.Transport(
+TransportID INT Identity(1,1),
+nazwa VARCHAR NOT NULL,
+liczba_pracownikow INT NOT NULL,
+liczba_samolotow INT NOT NULL,
+liczba_pociagow INT NOT NULL,
+liczba_busow INT NOT NULL,
+liczba_statkow INT NOT NULL,
+powierzchnia FLOAT NOT NULL,
+) AS NODE;
+
+INSERT INTO dbo.Transport(nazwa, liczba_pracownikow, liczba_samolotow, liczba_pociagow, liczba_busow, liczba_statkow, powierzchnia )
+VALUES 
+('Nemizah Airport', 2215, 15, 0, 0, 0, 1845.4), 
+('Nemizah Central Station', 1156, 0, 20, 30, 0, 732.8), 
+('Floren Central Station', 512, 0, 11, 15, 0, 512.2), 
+('Zednaarg Train Station', 659, 0, 12, 0, 0, 454.1), 
+('Aurgann Central Station', 815, 0, 14, 10, 0, 554.1), 
+('Aurgann Docks', 241, 0, 0, 0, 32, 781.2);
+
+CREATE TABLE dbo.Uczelnia(
+UczelniaID INT Identity(1,1),
+nazwa VARCHAR NOT NULL,
+liczba_pracownikow INT NOT NULL,
+liczba_studentow INT NOT NULL,
+powierzchnia FLOAT NOT NULL,
+) AS NODE;
+
+INSERT INTO dbo.Uczelnia(nazwa, liczba_pracownikow, liczba_studentow, powierzchnia)
+VALUES 
+('Nemizah Academy', 4461, 25324, 781.2),
+('Nemizah University', 4822, 19376, 655.8),
+('Floren School Of Technology', 1511, 8125, 485.1),
+('Zednaarg University', 3521, 9911, 519.4);
+
+CREATE TABLE wydarzenie_e(data_wyd DATE, miejsce VARCHAR) AS EDGE;
+
+INSERT INTO wydarzenie_e($from_id , $to_id, data_wyd, miejsce)
+VALUES
+((SELECT $node_id FROM Wydarzenie WHERE WydarzenieID=1), (SELECT $node_id FROM Miasto WHERE MiastoID=3), '06/21/2018', 'Ervan Stadium'),
+((SELECT $node_id FROM Wydarzenie WHERE WydarzenieID=2), (SELECT $node_id FROM Miasto WHERE MiastoID=2), '07/04/2018', 'Betlaar Shopping Centre');
+
+CREATE TABLE zabytek_e AS EDGE;
+
+INSERT INTO zabytek_e($from_id , $to_id)
+VALUES
+((SELECT $node_id FROM Zabytek WHERE ZabytekID=1), (SELECT $node_id FROM Miasto WHERE MiastoID=5)),
+((SELECT $node_id FROM Zabytek WHERE ZabytekID=2), (SELECT $node_id FROM Miasto WHERE MiastoID=3)),
+((SELECT $node_id FROM Zabytek WHERE ZabytekID=3), (SELECT $node_id FROM Miasto WHERE MiastoID=4)),
+((SELECT $node_id FROM Zabytek WHERE ZabytekID=4), (SELECT $node_id FROM Miasto WHERE MiastoID=3)),
+((SELECT $node_id FROM Zabytek WHERE ZabytekID=5), (SELECT $node_id FROM Miasto WHERE MiastoID=2)),
+((SELECT $node_id FROM Zabytek WHERE ZabytekID=6), (SELECT $node_id FROM Miasto WHERE MiastoID=4)),
+((SELECT $node_id FROM Zabytek WHERE ZabytekID=7), (SELECT $node_id FROM Miasto WHERE MiastoID=1));
+
+CREATE TABLE transport_e AS EDGE;
+
+INSERT INTO transport_e($from_id , $to_id)
+VALUES
+((SELECT $node_id FROM Transport WHERE TransportID=1), (SELECT $node_id FROM Miasto WHERE MiastoID=3)),
+((SELECT $node_id FROM Transport WHERE TransportID=2), (SELECT $node_id FROM Miasto WHERE MiastoID=3)),
+((SELECT $node_id FROM Transport WHERE TransportID=3), (SELECT $node_id FROM Miasto WHERE MiastoID=2)),
+((SELECT $node_id FROM Transport WHERE TransportID=4), (SELECT $node_id FROM Miasto WHERE MiastoID=5)),
+((SELECT $node_id FROM Transport WHERE TransportID=5), (SELECT $node_id FROM Miasto WHERE MiastoID=1)),
+((SELECT $node_id FROM Transport WHERE TransportID=6), (SELECT $node_id FROM Miasto WHERE MiastoID=1));
+
+CREATE TABLE uczelnia_e AS EDGE;
+
+INSERT INTO uczelnia_e($from_id , $to_id)
+VALUES
+((SELECT $node_id FROM Uczelnia WHERE UczelniaID=1), (SELECT $node_id FROM Miasto WHERE MiastoID=3)),
+((SELECT $node_id FROM Uczelnia WHERE UczelniaID=2), (SELECT $node_id FROM Miasto WHERE MiastoID=3)),
+((SELECT $node_id FROM Uczelnia WHERE UczelniaID=3), (SELECT $node_id FROM Miasto WHERE MiastoID=2)),
+((SELECT $node_id FROM Uczelnia WHERE UczelniaID=4), (SELECT $node_id FROM Miasto WHERE MiastoID=5));
+
+CREATE UNIQUE INDEX stol ON Miasto(stolica);
+CREATE UNIQUE INDEX nazmiast ON Miasto(nazwa);
+CREATE INDEX odl ON droga(dystans);
+CREATE INDEX nazwyd ON Wydarzenie(nazwa);
+CREATE INDEX datawyd ON wydarzenie_e(data_wyd);
+CREATE INDEX miejscewyd ON wydarzenie_e(miejsce);
+CREATE INDEX nazzab ON Zabytek(nazwa);
+CREATE INDEX epokazab ON Zabytek(epoka);
+CREATE INDEX stylzab ON Zabytek(styl);
+CREATE INDEX naztrans ON Transport(nazwa);
+CREATE INDEX nazuni ON Uczelnia(nazwa);

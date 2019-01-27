@@ -1,0 +1,100 @@
+//Baza danych miast
+
+//Niech miasto Nemizah (wezel nr 3) bedzie stolica;
+
+CREATE CONSTRAINT ON (n3:City) ASSERT n3.capital IS UNIQUE;
+
+//Tworzenie wezlow miast;
+
+CREATE (n1:City {name: 'Aurgann', population: 7849}),
+ (n2:City {name: 'Floren', population: 12645}),
+ (n3:City {name: 'Nemizah', population: 34114, capital: TRUE}),
+ (n4:City {name: 'Oerunh', population: 8662}),
+ (n5:City {name: 'Zednaarg', population: 21045}),
+
+//Tworzenie sciezek miedzy miastami;
+
+(n1)-[:path {distance: 144}]->(n2),
+(n2)-[:path {distance: 131}]->(n5),
+(n5)-[:path {distance: 160}]->(n4),
+(n4)-[:path {distance: 128}]->(n1),
+(n3)-[:path {distance: 94}]->(n1),
+(n3)-[:path {distance: 65}]->(n2),
+(n3)-[:path {distance: 78}]->(n4),
+(n3)-[:path {distance: 139}]->(n5),
+
+(n2)-[:path {distance: 154}]->(n1),
+(n5)-[:path {distance: 127}]->(n2),
+(n4)-[:path {distance: 167}]->(n5),
+(n1)-[:path {distance: 122}]->(n4),
+(n1)-[:path {distance: 106}]->(n3),
+(n2)-[:path {distance: 68}]->(n3),
+(n4)-[:path {distance: 78}]->(n3),
+(n5)-[:path {distance: 145}]->(n3),
+
+//Tworzenie wezlow obiektow;
+
+ (n6:Event {name: 'Nemizah Festival', type: 'Concert'}),
+ (n7:Event {name: 'Night Of The Raven', type: 'Show'}),
+
+ (n8:Monument {name: 'Zednaarg Castle', built: 1434, age: 'Middleages', style: 'Gothic', area: 312.8}),
+ (n9:Monument {name: 'Nemizah Palace', built: 1688, age: 'Modern', style: 'Baroque', area: 435.2}),
+ (n10:Monument {name: 'Sultans Palace', built: 1312, age: 'Middleages', style: 'Gothic', area: 355.1}),
+ (n11:Monument {name: 'Nemizah City Hall', built: 1792, age: 'Modern', style: 'Gothic Revival', area: 234.9}),
+ (n12:Monument {name: 'Floren Castle', built: 1121, age: 'Middleages', style: 'Roman', area: 241.6}),
+ (n13:Monument {name: 'Oerunh Therms', built: 104, age: 'Antiquity', style: 'Roman', area: 144.2}),
+ (n14:Monument {name: 'Old Crane', built: 1475, age: 'Middleages', style: 'Gothic', area: 0.01}),
+
+ (n15:Transport {name: 'Nemizah Airport', employed: 2215, number_of_airplanes: 15, number_of_trains: 0, number_of_buses: 0, number_of_ships: 0, area: 1845.4}),
+ (n16:Transport {name: 'Nemizah Central Station', employed: 1156, number_of_airplanes: 0, number_of_trains: 20, number_of_buses: 30, number_of_ships: 0, area: 732.8}),
+ (n17:Transport {name: 'Floren Central Station', employed: 512, number_of_airplanes: 0, number_of_trains: 11, number_of_buses: 15, number_of_ships: 0, area: 512.2}),
+ (n18:Transport {name: 'Zednaarg Train Station', employed: 659, number_of_airplanes: 0, number_of_trains: 12, number_of_buses: 0, number_of_ships: 0, area: 454.1}),
+ (n19:Transport {name: 'Aurgann Central Station', employed: 815, number_of_airplanes: 0, number_of_trains: 14, number_of_buses: 10, number_of_ships: 0, area: 554.1}),
+ (n20:Transport {name: 'Aurgann Docks', employed: 241, number_of_airplanes: 0, number_of_trains: 0, number_of_buses: 0, number_of_ships: 32, area: 781.2}),
+
+ (n21:University {name: 'Nemizah Academy', employed: 4461, students: 25324, area: 781.2}),
+ (n22:University {name: 'Nemizah University', employed: 4822, students: 19376, area: 655.8}),
+ (n23:University {name: 'Floren School Of Technology', employed: 1511, students: 8125, area: 485.1}),
+ (n24:University {name: 'Zednaarg University', employed: 3521, students: 9911, area: 519.4}),
+
+//Laczenie obiektow z miastami;
+
+(n6)-[:event {date: 20180621,  place: 'Ervan Stadium'}]->(n3),
+(n7)-[:event {date: 20180704, place: 'Betlaar Shopping Centre'}]->(n2),
+
+(n8)-[:monument]->(n5),
+(n9)-[:monument]->(n3),
+(n10)-[:monument]->(n4),
+(n11)-[:monument]->(n3),
+(n12)-[:monument]->(n2),
+(n13)-[:monument]->(n4),
+(n14)-[:monument]->(n1),
+
+(n15)-[:transport]->(n3),
+(n16)-[:transport]->(n3),
+(n17)-[:transport]->(n2),
+(n18)-[:transport]->(n5),
+(n19)-[:transport]->(n1),
+(n20)-[:transport]->(n1),
+
+(n21)-[:university]->(n3),
+(n22)-[:university]->(n3),
+(n23)-[:university]->(n2),
+(n24)-[:university]->(n5)
+
+//Tworzenie indeksow
+
+CREATE CONSTRAINT ON (n:City) ASSERT n.name IS UNIQUE;
+CREATE INDEX ON :path(distance);
+CREATE INDEX ON :Event(name);
+CREATE INDEX ON :event(date);
+CREATE INDEX ON :event(place);
+CREATE INDEX ON :Monument(name);
+CREATE INDEX ON :Monument(age);
+CREATE INDEX ON :Monument(style);
+CREATE INDEX ON :Transport(name);
+CREATE INDEX ON :University(name);
+
+//Wyswietl wszystkie wezly i relacje
+
+MATCH (n) RETURN n limit 100
